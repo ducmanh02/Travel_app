@@ -6,6 +6,7 @@ import "./RenderHistory.css";
 
 import { FIREBASE_APP } from "./firebase";
 
+
 const database = getDatabase(FIREBASE_APP);
 const storage = getStorage(FIREBASE_APP);
 

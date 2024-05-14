@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1030330629926",
+    "firebase_url": "https://hanoi-tourism-default-rtdb.firebaseio.com",
+    "project_id": "hanoi-tourism",
+    "storage_bucket": "hanoi-tourism.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030330629926:android:ba528fab79f1a2c0404be7",
+        "android_client_info": {
+          "package_name": "com.ptit.travelapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8RVB_U9Zrs9FJfuoeuSWY12FdO3ql79E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

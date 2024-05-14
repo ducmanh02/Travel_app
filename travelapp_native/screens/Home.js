@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   SafeAreaView,
   ScrollView,
@@ -25,6 +26,10 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { DrawerActions } from '@react-navigation/native';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+
+const Drawer = createDrawerNavigator();
 
 const firebaseApp = require("../firebase");
 
@@ -45,38 +50,33 @@ const COLORS = {
   orange: "#f5a623",
 };
 
-const categoryIcons = [
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="church" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="festival" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="school" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="stars" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-];
+const ListCategories = ({ navigation }) => {
+  const categoryIcons = [
+    <TouchableOpacity onPress={() => navigation.navigate("ListPost")}>
+      <Icon name="church" size={25} color={COLORS.primary} />
+    </TouchableOpacity>,
+    <TouchableOpacity onPress={() => navigation.navigate("ListPost")}>
+      <Icon name="festival" size={25} color={COLORS.primary} />
+    </TouchableOpacity>,
+    <TouchableOpacity onPress={() => navigation.navigate("ListPost")}>
+      <Icon name="school" size={25} color={COLORS.primary} />
+    </TouchableOpacity>,
 
-const ListCategories = ({navigation}) => {
+  ];
   const place= "Ho Guom"
   return (
     <View style={style.categoryContainer}>
       {categoryIcons.map((icon, index) => (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate("PTTT1",navigation, place)}
-        >
+        
           <View key={index} style={style.iconContainer}>
             {icon}
           </View>
-        </TouchableOpacity>
+       
       ))}
     </View>
   );
 };
+
 
 const Card = ({ place, navigation }) => {
   return (
@@ -109,18 +109,13 @@ const Card = ({ place, navigation }) => {
               {place.address}
             </Text>
           </View>
-          {/* <View style={{ flexDirection: "row" }}>
-            <Icon name="star" size={20} color={COLORS.white} />
-            <Text style={{ marginLeft: 5, color: COLORS.white }}>5.0</Text>
-          </View> */}
         </View>
       </ImageBackground>
     </TouchableOpacity>
   );
 };
 
-const RecommendedCard = ({ navigation,place }) => {
-  console.log(place.description);
+const RecommendedCard = ({ navigation, place }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -151,10 +146,6 @@ const RecommendedCard = ({ navigation,place }) => {
                 {place.address}
               </Text>
             </View>
-            {/* <View style={{ flexDirection: "row" }}>
-              <Icon name="star" size={22} color={COLORS.white} />
-              <Text style={{ color: COLORS.white, marginLeft: 5 }}>5.0</Text>
-            </View> */}
           </View>
           <View>
             <Text style={{ color: "black", fontSize: 16 }}>
@@ -191,7 +182,12 @@ const Home = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
       <View style={style.header}>
-        <Icon name="sort" size={28} color={COLORS.white} />
+        <Icon
+          name="sort"
+          size={28}
+          color={COLORS.white}
+          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+        />
         <Icon name="notifications-none" size={28} color={COLORS.white} />
       </View>
       <ScrollView
@@ -217,7 +213,7 @@ const Home = ({ navigation }) => {
             </View>
           </View>
         </View>
-        <ListCategories navigation = {navigation} />
+        <ListCategories navigation={navigation} />
         <Text style={style.sectionTitle}>Địa Điểm</Text>
         <View>
           <FlatList
@@ -229,6 +225,7 @@ const Home = ({ navigation }) => {
               <Card place={item} navigation={navigation} />
             )}
           />
+
           <Text style={style.sectionTitle}>Địa Điểm Nổi Bật</Text>
           <FlatList
             snapToInterval={width - 20}
@@ -257,7 +254,14 @@ const Home = ({ navigation }) => {
       <View style={style.footer}>
         <FontAwesomeIcon icon={faHome} size={25} />
         <FontAwesomeIcon icon={faHeart} size={25} />
-        <FontAwesomeIcon icon={faUser} size={25} />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate("User", navigation);
+          }}
+        >
+          <FontAwesomeIcon icon={faUser} size={25} />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

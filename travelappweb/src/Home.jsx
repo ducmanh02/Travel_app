@@ -7,11 +7,11 @@ const Home = () => {
     return (
         <>
             <div>Home</div>
-            <LoginForm />
+            {/* <LoginForm /> */}
             <nav className="button-bar">
                 
                     
-                        <Link to="/" className="nav-button">Login</Link>
+                        <Link to="/login" className="nav-button">Login</Link>
                     
                    
                         <Link to="/formHistory" className="nav-button">History Form</Link>
@@ -23,7 +23,7 @@ const Home = () => {
                    
                         <Link to="/favorite" className="nav-button">Favorite Places</Link>
                  
-                
+                        <Link to="/" className="nav-button">Home</Link>
             </nav>
 
         </>

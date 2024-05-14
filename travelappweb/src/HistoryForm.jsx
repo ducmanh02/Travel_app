@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getDatabase, ref, push, set } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Link } from "react-router-dom";
 
 import  './Form.css';
 const firebaseApp = require('./firebase.js');
@@ -100,6 +101,7 @@ const HistoryForm = () => {
       <input type="file" id="image" name="image" accept="image/*" multiple onChange={handleImageChange} required />
 
       <button type="submit">Lưu</button>
+      <Link to="/" className="nav-button">Home</Link>
     </form>
   );
 };

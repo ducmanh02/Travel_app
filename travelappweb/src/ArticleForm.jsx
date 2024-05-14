@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { getDatabase, ref, push, set } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Link } from "react-router-dom";
 
-import  './Form.css';
+import './Form.css';
 const firebaseApp = require('./firebase.js');
 
 const database = getDatabase(firebaseApp.FIREBASE_APP);
@@ -84,7 +85,7 @@ const HistoryForm = () => {
   };
 
   return (
-    <form className="my-form" onSubmit={handleSubmit}>
+    <><form className="my-form" onSubmit={handleSubmit}>
       <label htmlFor="name">Tên bài báo:</label>
       <input type="text" id="name" name="name" value={name} onChange={handleNameChange} required />
 
@@ -96,6 +97,7 @@ const HistoryForm = () => {
 
       <button type="submit">Lưu</button>
     </form>
+      <Link to="/" className="nav-button">Home</Link></>
   );
 };
 

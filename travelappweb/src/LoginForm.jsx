@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import './App.css';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 const firebase = require('./firebase.js');
@@ -72,6 +73,7 @@ const LoginForm = () => {
       </div>
       <button onClick={handleLoginSubmit} type="submit">Đăng nhập</button>
       <button onClick={handleSignUpSubmit} type="submit">Đăng ký</button>
+      <Link to="/" className="nav-button">Home</Link>
     </form>
   );
 };

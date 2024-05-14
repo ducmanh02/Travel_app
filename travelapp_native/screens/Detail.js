@@ -8,13 +8,14 @@ import {
   Text,
   Alert,
   Modal,
-  Pressable,Button
-
+  Pressable,
+  ScrollView,
+  Button,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import Geocoding from "react-native-geocoding";
-import { Linking } from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
+import { Linking } from "react-native";
+import Geolocation from "react-native-geolocation-service";
 
 // Thiết lập khóa API của bạn
 Geocoding.init("AIzaSyB9jG7ROCL115gTV3Z1boznnkxN4lTM-wc");
@@ -54,16 +55,13 @@ const DetailsScreen = ({ navigation, route }) => {
     }
   };
   const openGoogleMapsDirections = () => {
-    
-    
     const endLocation = `${location.lat},${location.lng}`;
-    
+
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${endLocation}`;
-    
-    Linking.openURL(googleMapsUrl)
-      .catch(error => {
-        console.error('Lỗi khi mở Google Maps:', error);
-      });
+
+    Linking.openURL(googleMapsUrl).catch((error) => {
+      console.error("Lỗi khi mở Google Maps:", error);
+    });
   };
 
   console.log(place);
@@ -150,6 +148,7 @@ const DetailsScreen = ({ navigation, route }) => {
         <View style={style.iconContainer}>
           <Icon name="favorite" color={COLORS.red} size={30} />
         </View>
+        <ScrollView style={{ Height: 600 }}>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <Icon name="place" size={28} color={COLORS.primary} />
           <Text
@@ -166,9 +165,11 @@ const DetailsScreen = ({ navigation, route }) => {
         <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 20 }}>
           About the trip
         </Text>
-        <Text style={{ marginTop: 20, lineHeight: 22 }}>
-          {place.description}
-        </Text>
+        
+          <Text style={{ marginTop: 20, lineHeight: 22 }}>
+            {place.description}
+          </Text>
+        </ScrollView>
       </View>
       <View style={style.footer}>
         <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
@@ -229,7 +230,7 @@ const style = StyleSheet.create({
     top: -30,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingVertical: 40,
+    paddingTop: 40,
     paddingHorizontal: 20,
     backgroundColor: COLORS.white,
     flex: 0.3,

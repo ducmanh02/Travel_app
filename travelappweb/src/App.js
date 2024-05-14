@@ -4,6 +4,7 @@ import "./App.css";
 import HistoryForm from "./HistoryForm";
 import LoginForm from "./LoginForm";
 
+
 import { getDatabase, ref, push, set } from "firebase/database";
 
 import RenderHistory from "./RenderHistory.jsx";
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
     element: <Home/>,
   },
   {
-    path: "/formHistory",
+    path: "/formhistory",
     element: (
       <>
         <HistoryForm />
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/formFestival",
+    path: "/formfestival",
     element: (
       <>
         <FestivalForm />
@@ -43,7 +44,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/formArtical",
+    path: "/formartical",
     element: (
       <>
         <ArticleForm />
@@ -57,6 +58,14 @@ const router = createBrowserRouter([
       <>
         <FavoritePlaces />
         <Place />
+      </>
+    ),
+  },
+  {
+    path: "/login",
+    element: (
+      <>
+        <LoginForm/>
       </>
     ),
   },
