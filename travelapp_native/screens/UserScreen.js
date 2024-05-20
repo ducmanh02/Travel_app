@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import Icon from "react-native-vector-icons/MaterialIcons";
 const firebaseApp = require("../firebase.js");
 const auth = firebaseApp.FIREBASE_AUTH;
 
@@ -90,6 +91,15 @@ const UserScreen = ({ navigation }) => {
       style={{ flex: 1 }}
       source={require("../assets/images/carousel/pic1.jpg")}
     >
+      <View style={styles.header}>
+          <Icon
+            name="arrow-back-ios"
+            size={28}
+            color={COLORS.black}
+            onPress={navigation.goBack}
+          />
+         
+        </View>
       <View style={styles.container}>
         <Text style={styles.title}>User:{email} </Text>
         
@@ -104,7 +114,7 @@ const UserScreen = ({ navigation }) => {
           <>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => navigation.navigate("Signup", navigation)}
+              onPress={() => navigation.navigate("Signup")}
             >
               <View style={styles.btn}>
                 <Text style={styles.btnText}>Sign Up</Text>
@@ -112,7 +122,7 @@ const UserScreen = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => navigation.navigate("Login", navigation)}
+              onPress={() => navigation.navigate("Login")}
             >
               <View style={styles.btn}>
                 <Text style={styles.btnText}>Login</Text>
@@ -131,6 +141,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 40,
+  },
+  header: {
+    marginTop: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 35,
@@ -154,6 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+    
   },
   btnText: {
     fontWeight: "bold",

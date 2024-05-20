@@ -9,6 +9,7 @@ import LoginScreen from './screens/LoginScreen';
 import ListPost from './screens/ListPost';
 import UserScreen from './screens/UserScreen';
 import SignupScreen from './screens/SignupScreen';
+import ListFavorite from './screens/ListFavorite';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ const MainStackNavigator = () => {
       <Stack.Screen name="Detail" component={DetailsScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Favorite" component={ListFavorite} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 };
@@ -27,11 +29,11 @@ const MainStackNavigator = () => {
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Login">
-        <Drawer.Screen name="Home" component={MainStackNavigator} options={{ headerShown: false }} />
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Main" component={MainStackNavigator} options={{ headerShown: false }} />
         <Drawer.Screen name="User" component={UserScreen} options={{ headerShown: false }} />
         <Drawer.Screen name="ListPost" component={ListPost} options={{ headerShown: false }} />
-        {/* Remove the Detail screen from the Drawer */}
+        
       </Drawer.Navigator>
     </NavigationContainer>
   );

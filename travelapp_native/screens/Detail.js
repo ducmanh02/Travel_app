@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
   SafeAreaView,
@@ -16,6 +16,12 @@ import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import Geocoding from "react-native-geocoding";
 import { Linking } from "react-native";
 import Geolocation from "react-native-geolocation-service";
+
+import { getDatabase, ref, onValue, get,set } from "firebase/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const firebaseApp = require("../firebase");
+
+const database = getDatabase(firebaseApp.FIREBASE_APP);
 
 // Thiết lập khóa API của bạn
 Geocoding.init("AIzaSyB9jG7ROCL115gTV3Z1boznnkxN4lTM-wc");
@@ -38,22 +44,29 @@ const DetailsScreen = ({ navigation, route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [location, setLocation] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [favoritePlaces, setFavoritePlaces] = useState({});
+
+
 
   const searchLocation = async () => {
     try {
       const response = await Geocoding.from(place.address);
       console.log("place");
-      console.log("search address: " + response);
+      console.log("search address: " + response.plus_code);
       const { results } = response;
       if (results.length > 0) {
         const { geometry } = results[0];
         const { location } = geometry;
         setLocation(location);
+        console.log(location);
       }
     } catch (error) {
       console.error("Lỗi khi tìm kiếm địa điểm:", error);
     }
   };
+
+
   const openGoogleMapsDirections = () => {
     const endLocation = `${location.lat},${location.lng}`;
 
@@ -64,7 +77,69 @@ const DetailsScreen = ({ navigation, route }) => {
     });
   };
 
-  console.log(place);
+
+  const handleLike = async () => {
+    addToFavorites();
+    setLiked(!liked);
+  };
+
+  const addToFavorites = async () => {
+    const userId = await AsyncStorage.getItem("userId");
+    if(userId == null){
+      setLiked(false);
+      navigation.navigate("Login");
+    }
+    const databaseRef = ref(database, "users/" + userId + "/favoritePlaces/" + place.id);
+    try {
+      if (liked) {
+        // Xóa địa điểm yêu thích
+        await set(databaseRef, null);
+        
+      } else {
+        // Thêm địa điểm yêu thích
+        await set(databaseRef, true);
+        
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật danh sách yêu thích:", error);
+    }
+  };
+
+  const getFavorite = async () => {
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+      if (userId !== null) {
+        console.log("Id người dùng:", userId);
+        const FavoritePlacesRef = ref(database, `users/${userId}/favoritePlaces`);
+        const snapshot = await get(FavoritePlacesRef);
+        const data = snapshot.val();
+        setFavoritePlaces(data || {});
+        return data;
+      } else {
+        console.log("Không tìm thấy id người dùng.");
+        return null;
+      }
+    } catch (error) {
+      console.log("Lỗi khi lấy id người dùng:", error);
+      return null;
+    }
+  };
+  
+  const checkLiked = async () => {
+    const data = await getFavorite();
+    if (data !== null) {
+      const isFavorite = place.id in data;
+      setLiked(isFavorite);
+    } else {
+      setLiked(false);
+    }
+  };
+  useEffect(() => {
+    
+    checkLiked();
+  }, []);
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <Modal
@@ -88,7 +163,6 @@ const DetailsScreen = ({ navigation, route }) => {
                 latitudeDelta: 0.022,
                 longitudeDelta: 0.021,
               }}
-              showsMyLocationButton
             >
               {location && (
                 <Marker
@@ -100,18 +174,29 @@ const DetailsScreen = ({ navigation, route }) => {
               )}
             </MapView>
 
-            <Pressable
-              style={[style.button, style.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={style.textStyle}>Hide Modal</Text>
-            </Pressable>
-            <Button title="Dẫn đường" onPress={openGoogleMapsDirections} />
+            <View style={[style.btnContainer]}>
+              <View>
+                <Pressable
+                  style={[style.button, style.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={style.textStyle}>Đóng</Text>
+                </Pressable>
+              </View>
+              <View>
+                <Pressable
+                  style={[style.button, style.buttonClose]}
+                  onPress={openGoogleMapsDirections}
+                >
+                  <Text style={style.textStyle}>Dẫn đường</Text>
+                </Pressable>
+              </View>
+            </View>
           </View>
         </View>
       </Modal>
 
-      <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
+      
       <ImageBackground style={{ flex: 0.7 }} src={place.imageUrls[0]}>
         <View style={style.header}>
           <Icon
@@ -120,7 +205,7 @@ const DetailsScreen = ({ navigation, route }) => {
             color={COLORS.white}
             onPress={navigation.goBack}
           />
-          <Icon name="more-vert" size={28} color={COLORS.white} />
+          
         </View>
         <View style={style.imageDetails}>
           <Text
@@ -134,45 +219,43 @@ const DetailsScreen = ({ navigation, route }) => {
           >
             {place.name}
           </Text>
-          <View style={{ flexDirection: "row" }}>
-            <Icon name="star" size={30} color={COLORS.orange} />
-            <Text
-              style={{ color: COLORS.white, fontWeight: "bold", fontSize: 20 }}
-            >
-              5.0
-            </Text>
-          </View>
         </View>
       </ImageBackground>
       <View style={style.detailsContainer}>
         <View style={style.iconContainer}>
-          <Icon name="favorite" color={COLORS.red} size={30} />
+          <Pressable onPress={handleLike}>
+            <Icon
+              name="favorite"
+              style={{ color: liked ? COLORS.red : COLORS.grey }}
+              size={30}
+            />
+          </Pressable>
         </View>
         <ScrollView style={{ Height: 600 }}>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <Icon name="place" size={28} color={COLORS.primary} />
-          <Text
-            style={{
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: "bold",
-              color: COLORS.primary,
-            }}
-          >
-            {place.address}
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <Icon name="place" size={28} color={COLORS.primary} />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 20,
+                fontWeight: "bold",
+                color: COLORS.primary,
+              }}
+            >
+              {place.address}
+            </Text>
+          </View>
+          <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 20 }}>
+            About the trip
           </Text>
-        </View>
-        <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 20 }}>
-          About the trip
-        </Text>
-        
+
           <Text style={{ marginTop: 20, lineHeight: 22 }}>
             {place.description}
           </Text>
         </ScrollView>
       </View>
       <View style={style.footer}>
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text
             style={{
               fontSize: 18,
@@ -184,10 +267,7 @@ const DetailsScreen = ({ navigation, route }) => {
           </Text>
         </View>
         <View style={style.bookNowBtn}>
-          <Pressable
-            style={style.bookNowBtn}
-            onPress={() => setModalVisible(true)}
-          >
+          <Pressable style={style.bookNowBtn} onPress={()=>setModalVisible(true)}>
             <Text
               style={{
                 color: COLORS.primary,
@@ -227,16 +307,18 @@ const style = StyleSheet.create({
     alignItems: "center",
   },
   detailsContainer: {
-    top: -30,
+    top: -60,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingTop: 40,
-    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 0,
+    marginBottom: 0,
+    paddingHorizontal: 25,
     backgroundColor: COLORS.white,
-    flex: 0.3,
+    flex: 0.4,
   },
   header: {
-    marginTop: 60,
+    marginTop: 40,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
@@ -281,7 +363,7 @@ const style = StyleSheet.create({
     elevation: 5,
   },
   button: {
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 10,
     elevation: 2,
   },
@@ -303,6 +385,12 @@ const style = StyleSheet.create({
   map: {
     width: 300,
     height: 300,
+  },
+  btnContainer: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    width: 200,
+    marginTop: 10,
   },
 });
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getDatabase, ref, onValue, off, child, get } from "firebase/database";
 import { FIREBASE_APP, FIREBASE_AUTH } from './firebase.js';
+import 'firebase/firestore';
 
 const database = getDatabase(FIREBASE_APP);
 const auth = FIREBASE_AUTH;
@@ -11,7 +12,7 @@ function FavoritePlaces() {
 
     useEffect(() => {
         let userId = localStorage.getItem("userId");
-
+        
         const databaseRef = ref(database, 'users/' + userId + '/favoritePlaces');
         const historyRef = ref(database, 'history/');
 

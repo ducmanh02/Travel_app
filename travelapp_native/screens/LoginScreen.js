@@ -20,7 +20,7 @@ const COLORS = {
 };
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -97,13 +97,24 @@ const LoginScreen = ({ navigation }) => {
         style={{ flex: 1 }}
         source={require("../assets/images/carousel/pic1.jpg")}
       >
+        <View style={styles.header}>
+          <Icon
+            name="arrow-back-ios"
+            size={28}
+            color={COLORS.black}
+            onPress={navigation.goBack}
+          />
+         
+        </View>
         <View style={styles.container}>
           <Text style={styles.title}>Login</Text>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
               placeholder="Email"
-              placeholderTextColor={COLORS.grey}
+              placeholderTextColor={COLORS.dark
+                
+              }
               value={email}
               onChangeText={(text) => {
                 setEmail(text.trim());
@@ -112,7 +123,7 @@ const LoginScreen = ({ navigation }) => {
             <TextInput
               style={styles.input}
               placeholder="Password"
-              placeholderTextColor={COLORS.grey}
+              placeholderTextColor={COLORS.dark}
               secureTextEntry={true}
               value={password}
               onChangeText={(text) => {
@@ -142,6 +153,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 40,
+  },
+  header: {
+    marginTop: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 35,
@@ -176,6 +193,8 @@ const styles = StyleSheet.create({
   naviBtn: {
     paddingVertical: 20,
     justifyContent: "flex-end",
+    color: COLORS.light,
+    textDecorationLine: "underline",
   },
 });
 

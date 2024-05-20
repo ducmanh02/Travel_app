@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
   SafeAreaView,
   ScrollView,
@@ -26,8 +26,13 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
-import { DrawerActions } from '@react-navigation/native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { DrawerActions } from "@react-navigation/native";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from "@react-navigation/drawer";
 
 const Drawer = createDrawerNavigator();
 
@@ -61,22 +66,18 @@ const ListCategories = ({ navigation }) => {
     <TouchableOpacity onPress={() => navigation.navigate("ListPost")}>
       <Icon name="school" size={25} color={COLORS.primary} />
     </TouchableOpacity>,
-
   ];
-  const place= "Ho Guom"
+
   return (
     <View style={style.categoryContainer}>
       {categoryIcons.map((icon, index) => (
-        
-          <View key={index} style={style.iconContainer}>
-            {icon}
-          </View>
-       
+        <View key={index} style={style.iconContainer}>
+          {icon}
+        </View>
       ))}
     </View>
   );
 };
-
 
 const Card = ({ place, navigation }) => {
   return (
@@ -103,7 +104,7 @@ const Card = ({ place, navigation }) => {
             alignItems: "flex-end",
           }}
         >
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", paddingRight: 10 }}>
             <Icon name="place" size={20} color={COLORS.white} />
             <Text style={{ marginLeft: 5, color: COLORS.white }}>
               {place.address}
@@ -115,52 +116,13 @@ const Card = ({ place, navigation }) => {
   );
 };
 
-const RecommendedCard = ({ navigation, place }) => {
-  return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={() => navigation.navigate("Detail", place)}
-    >
-      <ImageBackground style={style.rmCardImage} src={place.imageUrls[0]}>
-        <Text
-          style={{
-            color: COLORS.white,
-            fontSize: 22,
-            fontWeight: "bold",
-            marginTop: 10,
-          }}
-        >
-          {place.name}
-        </Text>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-          }}
-        >
-          <View style={{ width: "100%", flexDirection: "row", marginTop: 10 }}>
-            <View style={{ flexDirection: "row" }}>
-              <Icon name="place" size={22} color={COLORS.white} />
-              <Text style={{ color: COLORS.white, marginLeft: 5 }}>
-                {place.address}
-              </Text>
-            </View>
-          </View>
-          <View>
-            <Text style={{ color: "black", fontSize: 16 }}>
-              {place.description}
-            </Text>
-          </View>
-        </View>
-      </ImageBackground>
-    </TouchableOpacity>
-  );
-};
-
 const Home = ({ navigation }) => {
   const [historyData, setHistoryData] = useState([]);
 
+
+
+
+  
   useEffect(() => {
     const historyRef = ref(database, "history");
 
@@ -176,6 +138,8 @@ const Home = ({ navigation }) => {
         setHistoryData([]);
       }
     });
+
+
   }, []);
 
   return (
@@ -204,6 +168,7 @@ const Home = ({ navigation }) => {
           <View style={{ flex: 1 }}>
             <Text style={style.headerTitle}>Explore the</Text>
             <Text style={style.headerTitle}>Ha Noi Tourism</Text>
+
             <View style={style.inputContainer}>
               <Icon name="search" size={28} />
               <TextInput
@@ -226,38 +191,25 @@ const Home = ({ navigation }) => {
             )}
           />
 
-          <Text style={style.sectionTitle}>Địa Điểm Nổi Bật</Text>
-          <FlatList
-            snapToInterval={width - 20}
-            contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={historyData}
-            renderItem={({ item }) => (
-              <RecommendedCard place={item} navigation={navigation} />
-            )}
-          />
-          <Text style={style.sectionTitle}>Báo Hà Nội</Text>
-          <FlatList
-            snapToInterval={width - 20}
-            contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={historyData}
-            renderItem={({ item }) => (
-              <RecommendedCard place={item} navigation={navigation} />
-            )}
-          />
           <Text style={style.sectionTitle}>Báo Hà Nội</Text>
         </View>
       </ScrollView>
       <View style={style.footer}>
         <FontAwesomeIcon icon={faHome} size={25} />
-        <FontAwesomeIcon icon={faHeart} size={25} />
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            navigation.navigate("User", navigation);
+
+            navigation.navigate("Favorite");
+          }}
+        >
+          <FontAwesomeIcon icon={faHeart} size={25} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate("User");
           }}
         >
           <FontAwesomeIcon icon={faUser} size={25} />
